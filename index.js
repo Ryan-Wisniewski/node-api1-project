@@ -15,7 +15,7 @@ server.post('/api/users', (req, res) => {
     if ( !name || !bio ){
         res
         .status(400)
-        .json({ message: 'Please provide a name and bio for the user.'})        
+        .json({ error: 'Please provide a name and bio for the user.'})        
     } else{
         db.insert(req.body)
             .then(user => {
@@ -23,7 +23,7 @@ server.post('/api/users', (req, res) => {
             })
             .catch(()=>{
                 res.status(500).json({
-                    message:
+                    error:
                         'There was an error accesing the user database'
                 })
             })
@@ -31,12 +31,18 @@ server.post('/api/users', (req, res) => {
 })
 
 server.get('/api/users', (req, res) => {
+    db.find()
+    .then(user => {
+        res.status(200).json(user)
+    })
+    .catch(()=>{
+        res.status(500).jason({error: "The users information could not be retrieved."})
+    })
     
-    res.db.find()
 })
 
 server.get('/api/users/:id', (req, res) => {
-    res.send('eachUser')
+    
 })
 
 server.put('/api/users/:id', (req, res) => {
@@ -50,23 +56,3 @@ server.delete('/api/users/:id', (req, res) => {
 server.listen(port, () => {
     console.log(`Server listening on ${port}`)
 })
-// server.post('/api/users', (req, res) => {
-//     const { name, bio } = req.body;
-  
-//     if (!name || !bio) {
-//       res
-//         .status(400)
-//         .json({ errorMessage: 'Please provide name and bio for the user.' });
-//     } else {
-//       Users.insert(req.body)
-//         .then(user => {
-//           res.status(201).json(user);
-//         })
-//         .catch(() => {
-//           res.status(500).json({
-//             errorMessage:
-//               'There was an error while saving the user to the database',
-//           });
-//         });
-//     }
-//   });
