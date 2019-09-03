@@ -41,11 +41,12 @@ server.get('/api/users', (req, res) => {
     
 })
 //no internet this seems close if not working :)
-server.get('/api/users/:id', (req, res, id) => {
-    // const { id } = req.body
-    console.log(id)
+server.get('/api/users/:id', (req, res) => {
+    const { id } = req.body
+    
 
     if (id !== Number(id)){
+        console.log(id)
         res
         .status(404)
         .json({ message: "The user with the specified ID does not exist." })
