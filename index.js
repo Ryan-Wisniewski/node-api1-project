@@ -6,7 +6,7 @@ const db = require('./data/db')
 const port = 5000
 
 const server = express()
-server.use(express.json())
+server.use(express.json(db))
 
 server.post('/api/users', (req, res) => {
     // res.status(201).json({url: '/api/users', operation: 'POST'})
@@ -40,19 +40,24 @@ server.get('/api/users', (req, res) => {
     })
     
 })
+//no internet this seems close if not working :)
+server.get('/api/users/:id', (req, res, id) => {
+    // const { id } = req.body
+    console.log(id)
 
-server.get('/api/users/:id', (req, res) => {
     if (id !== Number(id)){
         res
         .status(404)
         .json({ message: "The user with the specified ID does not exist." })
     }else{
-        db.findById()
+        db.findById(req.body)
         .then(user=>{
             res.status(200).json(user)
         })
         .catch(()=>{
-            res.status(500).jason({error: "The users information could not be retrieved."})
+            res.status(500).json({
+                error: "The users information could not be retrieved."
+            })
         })
     }
 })
@@ -62,7 +67,22 @@ server.put('/api/users/:id', (req, res) => {
 })
 
 server.delete('/api/users/:id', (req, res) => {
-    res.sendStatus(204)
+    //takes id
+    const { id } = req.body
+
+    if (id !== Number(id)){
+        res
+        .status(404)
+        .json({ message: "The user with the specified ID does not exist." })
+    } else {
+        db.remove()
+        .then(user=>{
+            res.status(200).json(user)
+        })
+        .catch(()=>{
+            res.status(500).json({ error: "The user could not be removed" })
+        })
+    }
 })
 
 server.listen(port, () => {
