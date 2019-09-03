@@ -9,7 +9,25 @@ const server = express()
 server.use(express.json())
 
 server.post('/api/users', (req, res) => {
-    res.status(201).json({url: '/api/users', operation: 'POST'})
+    // res.status(201).json({url: '/api/users', operation: 'POST'})
+    const { name, bio } = req.body
+
+    if ( !name || !bio ){
+        res
+        .status(400)
+        .json({ message: 'Please provide a name and bio for the user.'})        
+    } else{
+        db.insert(req.body)
+            .then(user => {
+                res.status(201).json(user)
+            })
+            .catch(()=>{
+                res.status(500).json({
+                    message:
+                        'There was an error accesing the user database'
+                })
+            })
+    }
 })
 
 server.get('/api/users', (req, res) => {
@@ -32,3 +50,23 @@ server.delete('/api/users/:id', (req, res) => {
 server.listen(port, () => {
     console.log(`Server listening on ${port}`)
 })
+// server.post('/api/users', (req, res) => {
+//     const { name, bio } = req.body;
+  
+//     if (!name || !bio) {
+//       res
+//         .status(400)
+//         .json({ errorMessage: 'Please provide name and bio for the user.' });
+//     } else {
+//       Users.insert(req.body)
+//         .then(user => {
+//           res.status(201).json(user);
+//         })
+//         .catch(() => {
+//           res.status(500).json({
+//             errorMessage:
+//               'There was an error while saving the user to the database',
+//           });
+//         });
+//     }
+//   });
