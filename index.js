@@ -42,7 +42,19 @@ server.get('/api/users', (req, res) => {
 })
 
 server.get('/api/users/:id', (req, res) => {
-    
+    if (id !== Number(id)){
+        res
+        .status(404)
+        .json({ message: "The user with the specified ID does not exist." })
+    }else{
+        db.findById()
+        .then(user=>{
+            res.status(200).json(user)
+        })
+        .catch(()=>{
+            res.status(500).jason({error: "The users information could not be retrieved."})
+        })
+    }
 })
 
 server.put('/api/users/:id', (req, res) => {
