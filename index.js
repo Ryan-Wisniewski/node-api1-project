@@ -14,7 +14,7 @@ server.post('/api/users', (req, res) => {
 
 server.get('/api/users', (req, res) => {
     
-    res.send(db.find())
+    res.db.find()
 })
 
 server.get('/api/users/:id', (req, res) => {
