@@ -8,6 +8,7 @@ const port = 5000
 const server = express()
 server.use(express.json(db))
 
+//w
 server.post('/api/users', (req, res) => {
     // res.status(201).json({url: '/api/users', operation: 'POST'})
     const { name, bio } = req.body
@@ -30,60 +31,97 @@ server.post('/api/users', (req, res) => {
     }
 })
 
+//w
 server.get('/api/users', (req, res) => {
     db.find()
     .then(user => {
         res.status(200).json(user)
     })
-    .catch(()=>{
-        res.status(500).jason({error: "The users information could not be retrieved."})
+    .catch(err=>{
+        res.status(500).json({error: "The users information could not be retrieved."})
     })
     
 })
-//no internet this seems close if not working :)
+//w
 server.get('/api/users/:id', (req, res) => {
-    const { id } = req.body
-    
-
-    if (id !== Number(id)){
-        console.log(id)
-        res
-        .status(404)
-        .json({ message: "The user with the specified ID does not exist." })
-    }else{
-        db.findById(req.body)
-        .then(user=>{
-            res.status(200).json(user)
+    const { id } = req.params
+    db.findById(id)
+        .then(user => {
+            if(id.length > 0){
+                res.status(200).json(user)
+            } else {
+                res.status(404).json({ error: 'invalid id' })
+            }
         })
-        .catch(()=>{
-            res.status(500).json({
-                error: "The users information could not be retrieved."
-            })
+        .catch(err => {
+            res.status(500).json({ error: 'Could not process'})
+        })
+})
+
+// server.put('/api/users/:id', (req, res) => {
+//     const { name, bio } = req.body;
+  
+//     if (!name || !bio) {
+//       res
+//         .status(400)
+//         .json({ errorMessage: 'Please provide name and bio for the user.' });
+//     } else {
+//       Users.update(req.params.id, req.body)
+//         .then(user => {
+//           if (user) {
+//             res.status(200).json(user);
+//           } else {
+//             res
+//               .status(404)
+//               .json({
+//                 message: 'The user with the specified ID does not exist.',
+//               });
+//           }
+//         })
+//         .catch(() => {
+//           res.status(500).json({
+//             errorMessage: 'The user information could not be modified.',
+//           });
+//         });
+//     }
+//   });
+  
+server.put('/api/users/:id', (req, res) => {
+    const { name, bio } = req.body
+    const { id } = req.params
+    console.log(id)
+    if (!name || !bio){
+        res.status(400).json({ errer: 'provide a name and bio'})
+    } else {
+    db.update(id, req.body)
+        .then(user => {
+            if(user){
+                res.status(200).json(user)
+            } else {
+                res.status(404).jason({ error: 'user not found'})
+            }
+        })
+        .catch(err => {
+            res.status(500).json({ error: 'Could not process'})
         })
     }
 })
 
-server.put('/api/users/:id', (req, res) => {
-    res.status(200).json({url: '/api/users/:id', operation: 'PUT'})
-})
-
+//w
 server.delete('/api/users/:id', (req, res) => {
     //takes id
-    const { id } = req.body
-
-    if (id !== Number(id)){
-        res
-        .status(404)
-        .json({ message: "The user with the specified ID does not exist." })
-    } else {
-        db.remove()
-        .then(user=>{
-            res.status(200).json(user)
+    const { id } = req.params
+    db.remove(id)
+        .then(users => {
+            if(id){
+                res.status(204).json(users)
+            } else {
+                res.status(400).json({ error: 'Invalid format'})
+            }
         })
-        .catch(()=>{
-            res.status(500).json({ error: "The user could not be removed" })
+        .catch(err => {
+            res.status(500).json({ error: 'Could not process'})
         })
-    }
 })
 
 server.listen(port, () => {
